@@ -159,7 +159,7 @@ class ControllerPaymentZarinpal extends Controller {
 
 		$encryption = new Encryption($this->config->get('config_encryption'));
 		$au = $this->request->get['Authority'];
-		$status =  $au = $this->request->get['Status'];
+		$status  = $this->request->get['Status'];
 		$order_id = $encryption->decrypt($this->request->get['order_id']);
 		$MerchantID=$this->config->get('zarinpal_PIN');
 		
