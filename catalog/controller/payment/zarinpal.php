@@ -158,7 +158,8 @@ class ControllerPaymentZarinpal extends Controller {
 		$this->load->library('encryption');
 
 		$encryption = new Encryption($this->config->get('config_encryption'));
-		$au = $this->request->get['au'];
+		$au = $this->request->get['Authority'];
+		$status =  $au = $this->request->get['Status'];
 		$order_id = $encryption->decrypt($this->request->get['order_id']);
 		$MerchantID=$this->config->get('zarinpal_PIN');
 		
@@ -169,7 +170,7 @@ class ControllerPaymentZarinpal extends Controller {
 		$Amount = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);		//echo $this->data['Amount'];
 		
 		$amount = $Amount/$order_info['currency_value'];
-		if ($order_info) {
+		if ($order_info && $status == "OK" ) {
 			if(($this->verify_payment($au, $amount))) {
 				$this->model_checkout_order->confirm($order_id, $this->config->get('zarinpal_order_status_id'), 'شماره سند تراکنش: '. $this->RefId);
 				
