@@ -47,7 +47,7 @@ class ControllerPaymentZarinpal extends Controller {
 		$this->data['back'] = $this->url->link('checkout/payment', '', 'SSL');
 		
 		//$client = new SoapClient("https://www.zarinpal.com/pg/services/WebGate/wsdl");
-		$client = new nusoap_client('https://www.zarinpal.com/pg/services/WebGate/wsdl', true);	
+		$client = new nusoap_client('https://de.zarinpal.com/pg/services/WebGate/wsdl', true);	
 		
 		if((!$client)){
 			$json = array();
@@ -124,7 +124,7 @@ class ControllerPaymentZarinpal extends Controller {
 
 		if($authority){
 			//$client = new SoapClient("http://pg.zarinpal.com/services/WebGate/wsdl");
-			 $client = new nusoap_client('https://www.zarinpal.com/pg/services/WebGate/wsdl', true);	
+			 $client = new nusoap_client('https://de.zarinpal.com/pg/services/WebGate/wsdl', true);	
 			if ((!$client)){
 				echo  "Error: can not connect to ZarinPal.<br>";return false;
 			} else {
