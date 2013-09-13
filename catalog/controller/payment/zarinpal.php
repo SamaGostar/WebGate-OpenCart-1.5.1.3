@@ -6,7 +6,7 @@ class ControllerPaymentZarinpal extends Controller {
 	
 	protected function index() {
 		$this->language->load('payment/zarinpal');
-    	$this->data['button_confirm'] = $this->language->get('button_confirm');
+		$this->data['button_confirm'] = $this->language->get('button_confirm');
 		
 		$this->data['text_wait'] = $this->language->get('text_wait');
 		$this->data['text_ersal'] = $this->language->get('text_ersal');
@@ -78,14 +78,14 @@ class ControllerPaymentZarinpal extends Controller {
 							)
 						);
 		$res = $client->call('PaymentRequest', $parameters);
-		if($res->Status == 100){
-			$this->data['action'] = 'https://www.zarinpal.com/pg/StartPay/' . $res->Authority;
+		if($res['Status'] == 100){
+			$this->data['action'] = 'https://www.zarinpal.com/pg/StartPay/' . $res['Authority'];
 			$json = array();
 			$json['success']= $this->data['action'];	
 			$this->response->setOutput(json_encode($json));
 		} else {
-			echo'ERR: '.$res->Status;
-			$this->CheckState($res->Status);
+			echo 'ERR: '. $res['Status'];
+			$this->CheckState($res['Status']);
 			//die();
 		}
 	}
@@ -140,13 +140,13 @@ class ControllerPaymentZarinpal extends Controller {
 									);
 				$res = $client->call('PaymentVerification', $parameters);
 			
-				$this->CheckState($res->Status);
+				$this->CheckState($res['Status']);
 				
-				if($res->Status==100){
-					$this->RefId = $res->RefId;
+				if($res['Status']==100){
+					$this->RefId = $res['RefId'];
 					return true;
 				} else {
-					echo'ERR: '.$res->Status;
+					echo 'ERR: '. $res['Status'];
 					return false;
 				}
 			}
