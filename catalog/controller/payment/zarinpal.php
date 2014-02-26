@@ -47,7 +47,7 @@ class ControllerPaymentZarinpal extends Controller {
 		$this->data['back'] = $this->url->link('checkout/payment', '', 'SSL');
 		
 		//$client = new SoapClient("https://www.zarinpal.com/pg/services/WebGate/wsdl");
-		$client = new nusoap_client('https://de.zarinpal.com/pg/services/WebGate/wsdl', true);	
+		$client = new nusoap_client('https://de.zarinpal.com/pg/services/WebGate/wsdl', 'wsdl');	
 		
 		if((!$client)){
 			$json = array();
@@ -74,7 +74,7 @@ class ControllerPaymentZarinpal extends Controller {
 								'Description' 	=> 'خريد شماره: '.$order_info['order_id'],
 								'Email' 		=> '',
 								'Mobile' 		=> '',
-								'CallbackURL' 	=> $callBackUrl
+								'CallbackURL' 	=> $callbackUrl
 							)
 						);
 		$res = $client->call('PaymentRequest', $parameters);
@@ -84,7 +84,6 @@ class ControllerPaymentZarinpal extends Controller {
 			$json['success']= $this->data['action'];	
 			$this->response->setOutput(json_encode($json));
 		} else {
-			echo 'ERR: '. $res['Status'];
 			$this->CheckState($res['Status']);
 			//die();
 		}
