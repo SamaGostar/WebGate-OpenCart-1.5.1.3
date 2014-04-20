@@ -9,7 +9,7 @@
 $('#button-confirm').bind('click', function() {
 	$.ajax({
 		type: 'GET',
-		url: 'index.php?route=payment/zarinpal/confirm',
+		url: 'index.php?route=payment/zarinpalwg/confirm',
 		dataType: 'json',		
 		beforeSend: function() {
 			$('#button-confirm').attr('disabled', true);
@@ -28,7 +28,7 @@ $('#button-confirm').bind('click', function() {
 		
 			if (json['success']) {
 				$('#payment').before('<div class="success"><img src="catalog/view/theme/default/image/loading.gif" alt="" /> <?php echo $text_ersal; ?></div>');
-				location = json['success'];
+				window.location.href = json['success'];
 			}
 			
 		
