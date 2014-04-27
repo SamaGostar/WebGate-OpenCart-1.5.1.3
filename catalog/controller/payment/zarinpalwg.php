@@ -1,6 +1,6 @@
 <?php
 //require_once(DIR_SYSTEM.'library/nuSoap/nusoap.php');
-class ControllerPaymentZarinpal extends Controller {
+class ControllerPaymentZarinpalwg extends Controller {
 	protected function index() {
 		$this->language->load('payment/zarinpalwg');
     	$this->data['button_confirm'] = $this->language->get('button_confirm');
