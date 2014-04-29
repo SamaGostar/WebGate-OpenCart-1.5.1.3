@@ -1,5 +1,5 @@
 <?php 
-class ModelPaymentZarinpal extends Model {
+class ModelPaymentZarinpalwg extends Model {
   	public function getMethod() {
 		$this->load->language('payment/zarinpalwg');
 
