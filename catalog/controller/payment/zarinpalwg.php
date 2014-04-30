@@ -88,7 +88,7 @@ public function confirm() {
 
 
 	$PayPath = 'https://www.zarinpal.com/pg/StartPay/'.$result->Authority;
-	$Status = $res->Status;
+	$Status = $result->Status;
 	
 	if($Status == 100 )
 	{
