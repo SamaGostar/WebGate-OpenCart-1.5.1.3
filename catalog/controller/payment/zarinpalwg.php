@@ -58,7 +58,7 @@ public function confirm() {
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 	
 	
-	$Description = $order_info['comment'];
+	$Description = $order_info['comment'] . ' - '. $order_info['order_id'];
 	
 	
 	
@@ -72,19 +72,14 @@ public function confirm() {
 								'MerchantID' 	=> $this->data['PIN'],
 								'Amount' 	=> $amount,
 								'Description' 	=> $Description,
-								'Email' 	=> $Email,
-								'Mobile' 	=> $Mobile,
+								'Email' 	=> '',
+								'Mobile' 	=> '',
 								'CallbackURL' 	=> $callbackUrl
 							)
 	);
 
 	//Redirect to URL You can do it also by creating a form
-	if($result->Status == 100)
-	{
-		Header('Location: https://www.zarinpal.com/pg/StartPay/'.$result->Authority);
-	} else {
-		echo'ERR: '.$result->Status;
-	}
+
 
 
 	$PayPath = 'https://www.zarinpal.com/pg/StartPay/'.$result->Authority;
@@ -102,6 +97,7 @@ public function confirm() {
 		} else {
 			
 			$this->CheckState($Status);
+			echo'ERR: '.$result->Status;
 			//die();
 		}
 
@@ -176,6 +172,7 @@ function verify_payment($authority, $amount){
 		$authority = $_GET['Authority'];
 		
 //Your Order ID
+$client = new SoapClient('https://de.zarinpal.com/pg/services/WebGate/wsdl', array('encoding' => 'UTF-8')); 
           $order_id=$this->session->data['order_id'];
         $this->load->model('checkout/order');
 		$order_info = $this->model_checkout_order->getOrder($order_id);
@@ -185,7 +182,7 @@ function verify_payment($authority, $amount){
 		$amount=$amount / 10;
 	
 			}
-		$$client = new SoapClient('https://de.zarinpal.com/pg/services/WebGate/wsdl', array('encoding' => 'UTF-8')); 
+		
 
 				$res = $client->PaymentVerification(
 						  	array(
@@ -195,7 +192,7 @@ function verify_payment($authority, $amount){
 								)
 		);
 		
-		$res = $client->verification($MerchantID,$amount,$au );
+		//$res = $client->verification($MerchantID,$amount,$au );
 		
 		//$Amount = $this->currency->format($order_info['total'], 'RLS', $order_info['value'], FALSE);
 		
