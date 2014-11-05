@@ -1,15 +1,15 @@
 <?php
-class ControllerPaymentZarinpal extends Controller {
+class ControllerPaymentZarinpalwg extends Controller {
 	protected function index() {
-		$this->language->load('payment/zarinpal');
+		$this->language->load('payment/zarinpalwg');
     	$this->data['button_confirm'] = $this->language->get('button_confirm');
 		
 		$this->data['text_wait'] = $this->language->get('text_wait');
 		$this->data['text_ersal'] = $this->language->get('text_ersal');
-		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/zarinpal.tpl')) {
-			$this->template = $this->config->get('config_template') . '/template/payment/zarinpal.tpl';
+		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/zarinpalwg.tpl')) {
+			$this->template = $this->config->get('config_template') . '/template/payment/zarinpalwg.tpl';
 		} else {
-			$this->template = 'default/template/payment/zarinpal.tpl';
+			$this->template = 'default/template/payment/zarinpalwg.tpl';
 		}
 		
 		$this->render();		
