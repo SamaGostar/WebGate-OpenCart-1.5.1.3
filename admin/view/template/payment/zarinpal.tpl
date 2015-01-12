@@ -14,7 +14,7 @@
   <?php } ?>
   <div class="box">
   <div class="heading">
-      <h1><img src="view/image/logo.png" alt="" /> <?php echo $heading_title; ?></h1>
+      <h1><img src="view/image/zarin.png" alt="" /> <?php echo $heading_title; ?></h1>
       <div class="buttons"><a onclick="$('#form').submit();" class="button"><span><?php echo $button_save; ?></span></a><a onclick="location = '<?php echo $cancel; ?>';" class="button"><span><?php echo $button_cancel; ?></span></a></div>
     </div>
     
@@ -25,19 +25,17 @@
 
       <tr>
         <td width="25%"><span class="required">*</span> <?php echo $entry_PIN; ?></td>
-        <td><input type="text" name="zarinpalwg_PIN" value="<?php echo $zarinpalwg_PIN; ?>" />
+        <td><input type="text" name="zarinpal_PIN" value="<?php echo $zarinpal_PIN; ?>" />
           <br />
           <?php if ($error_PIN) { ?>
           <span class="error"><?php echo $error_PIN; ?></span>
           <?php } ?></td>
       </tr>
-      
-        
       <tr>
         <td><?php echo $entry_order_status; ?></td>
-        <td><select name="zarinpalwg_order_status_id">
+        <td><select name="zarinpal_order_status_id">
             <?php foreach ($order_statuses as $order_status) { ?>
-            <?php if ($order_status['order_status_id'] == $zarinpalwg_order_status_id) { ?>
+            <?php if ($order_status['order_status_id'] == $zarinpal_order_status_id) { ?>
             <option value="<?php echo $order_status['order_status_id']; ?>" selected="selected"><?php echo $order_status['name']; ?></option>
             <?php } else { ?>
             <option value="<?php echo $order_status['order_status_id']; ?>"><?php echo $order_status['name']; ?></option>
@@ -47,8 +45,8 @@
       </tr>
       <tr>
         <td><?php echo $entry_status; ?></td>
-        <td><select name="zarinpalwg_status">
-            <?php if ($zarinpalwg_status) { ?>
+        <td><select name="zarinpal_status">
+            <?php if ($zarinpal_status) { ?>
             <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
             <option value="0"><?php echo $text_disabled; ?></option>
             <?php } else { ?>
@@ -59,7 +57,7 @@
       </tr>
       <tr>
         <td><?php echo $entry_sort_order; ?></td>
-        <td><input type="text" name="zarinpalwg_sort_order" value="<?php echo $zarinpalwg_sort_order; ?>" size="1" /></td>
+        <td><input type="text" name="zarinpal_sort_order" value="<?php echo $zarinpal_sort_order; ?>" size="1" /></td>
       </tr>
     </table>
 
