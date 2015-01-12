@@ -1,5 +1,9 @@
 <?php 
+<<<<<<< HEAD:admin/controller/payment/zarinpal.php
 class ControllerPaymentZARINPAL extends Controller {
+=======
+class ControllerPaymentZarinpalwg extends Controller {
+>>>>>>> origin/master:admin/controller/payment/zarinpalwg.php
 	private $error = array(); 
 
 	public function index() {
