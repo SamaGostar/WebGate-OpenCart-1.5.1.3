@@ -1,9 +1,6 @@
 <?php 
-<<<<<<< HEAD:catalog/model/payment/zarinpal.php
 class ModelPaymentZARINPAL extends Model {
-=======
-class ModelPaymentZarinpalwg extends Model {
->>>>>>> origin/master:catalog/model/payment/zarinpalwg.php
+
   	public function getMethod() {
 		$this->load->language('payment/zarinpal');
 
