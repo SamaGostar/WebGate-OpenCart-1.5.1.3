@@ -84,7 +84,7 @@ class ControllerPaymentZarinpal extends Controller {
 				break;
 			
 			default :
-				$json['error']= "خطای نامشخص. کد خطا: " . $status;
+				$json['error']= "خطای نامشخص. کد خطا: " ;
 				break;
 		}
 		
@@ -133,7 +133,7 @@ class ControllerPaymentZarinpal extends Controller {
 		$amount = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);		//echo $this->data['Amount'];
 		if ($order_info) {
 			if (($this->verify_payment($authority, $amount)) or ($debugmod==true)) {
-				$this->model_checkout_order->confirm($order_id, $this->config->get('zarinpal_order_status_id'),'شماره رسيد ديجيتالي; Authority: '.$au);
+				$this->model_checkout_order->confirm($order_id, $this->config->get('zarinpal_order_status_id'),'شماره رسيد ديجيتالي; Authority: '.$authority);
 				
 				$this->response->setOutput('<html><head><meta http-equiv="refresh" CONTENT="2; url=' . $this->url->link('checkout/success') . '"></head><body><table border="0" width="100%"><tr><td>&nbsp;</td><td style="border: 1px solid gray; font-family: tahoma; font-size: 14px; direction: rtl; text-align: right;">با تشکر پرداخت تکمیل شد.لطفا چند لحظه صبر کنید و یا  <a href="' . $this->url->link('checkout/success') . '"><b>اینجا کلیک نمایید</b></a></td><td>&nbsp;</td></tr></table></body></html>');
 			}
