@@ -93,8 +93,7 @@ class ControllerPaymentZarinpal extends Controller {
 
 	function verify_payment($authority, $amount){
 		if ($authority) {
-			//$client = new SoapClient("http://www.zarinpal.com/WebserviceGateway/wsdl");
-			 $client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', array('encoding' => 'UTF-8'));
+			$client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', array('encoding' => 'UTF-8'));
 			if ((!$client)) {
 				echo  "Error: can not connect to ZarinPal.<br>";
 				return false;
