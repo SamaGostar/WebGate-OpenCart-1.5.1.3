@@ -84,7 +84,7 @@ class ControllerPaymentZarinpal extends Controller {
 				break;
 			
 			default :
-				$json['error']= "خطای نامشخص. کد خطا: " ;
+				$json['error']= "خطای نامشخص. کد خطا: " . $status ;
 				break;
 		}
 		
