@@ -12,7 +12,7 @@ class ControllerPaymentZarinpal extends Controller {
 		
 		$data['button_confirm'] = $this->language->get('button_confirm');
 
-		return $this->load->view('payment/zarinpal', $data);
+		return $this->load->view('payment/zarinpal.tpl', $data);
 	}
 
 	public function confirm() {
