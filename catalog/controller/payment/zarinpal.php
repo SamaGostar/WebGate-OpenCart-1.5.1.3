@@ -26,7 +26,7 @@ class ControllerPaymentZarinpal extends Controller {
 		$this->data['cancel_return'] = $this->url->link('checkout/payment', '', 'SSL');
 		$this->data['back'] = $this->url->link('checkout/payment', '', 'SSL');
 		
-		$client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', array('encoding' => 'UTF-8'));	
+		$client = new SoapClient('https://sandbox.zarinpal.com/pg/services/WebGate/wsdl', array('encoding' => 'UTF-8'));	
 		
 		if ((!$client)) {
 			$json = array();
@@ -52,7 +52,7 @@ class ControllerPaymentZarinpal extends Controller {
 			'CallbackURL' 	=> $callbackUrl
 		));
 		if ($result->Status == 100) {
-			$this->data['action'] = 'https://www.zarinpal.com/pg/StartPay/'. $result->Authority;
+			$this->data['action'] = 'https://sandbox.zarinpal.com/pg/StartPay/'. $result->Authority;
 			$json = array();
 			$json['success']= $this->data['action'];
 			$this->response->setOutput(json_encode($json));
@@ -84,27 +84,32 @@ class ControllerPaymentZarinpal extends Controller {
 				break;
 			
 			default :
-				$json['error']= "خطای نامشخص. کد خطا: " . $status ;
+				$json['error']= "خطای نامشخص. کد خطا: "  ;
 				break;
 		}
 		
-		$this->response->setOutput(json_encode($json));
+		
+
 	}
 
 	function verify_payment($authority, $amount){
 		if ($authority) {
-			$client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', array('encoding' => 'UTF-8'));
+			$client = new SoapClient('https://sandbox.zarinpal.com/pg/services/WebGate/wsdl', array('encoding' => 'UTF-8'));
 			if ((!$client)) {
 				echo  "Error: can not connect to ZarinPal.<br>";
 				return false;
 			} else {
+					
+		if ($this->currency->getCode()=='RLS') {
+			$amount = $amount / 10;
+		}
 				$this->data['PIN'] = $this->config->get('zarinpal_PIN');
 				$result = $client->PaymentVerification(array(
 					'MerchantID'	 => $this->data['PIN'],
 					'Authority' 	 => $authority,
 					'Amount'	 => $amount
 				));
-			
+			//print_r($result ); exit;
 				$this->CheckState($result);
 				
 				if ($result->Status==100) {
@@ -135,9 +140,10 @@ class ControllerPaymentZarinpal extends Controller {
 				$this->model_checkout_order->confirm($order_id, $this->config->get('zarinpal_order_status_id'),'شماره رسيد ديجيتالي; Authority: '.$authority);
 				
 				$this->response->setOutput('<html><head><meta http-equiv="refresh" CONTENT="2; url=' . $this->url->link('checkout/success') . '"></head><body><table border="0" width="100%"><tr><td>&nbsp;</td><td style="border: 1px solid gray; font-family: tahoma; font-size: 14px; direction: rtl; text-align: right;">با تشکر پرداخت تکمیل شد.لطفا چند لحظه صبر کنید و یا  <a href="' . $this->url->link('checkout/success') . '"><b>اینجا کلیک نمایید</b></a></td><td>&nbsp;</td></tr></table></body></html>');
-			}
+			
 		} else {
-			$this->response->setOutput('<html><body><table border="0" width="100%"><tr><td>&nbsp;</td><td style="border: 1px solid gray; font-family: tahoma; font-size: 14px; direction: rtl; text-align: right;">.<br /><br /><a href="' . $this->url->link('checkout/cart').  '"><b>بازگشت به فروشگاه</b></a></td><td>&nbsp;</td></tr></table></body></html>');
+			$this->response->setOutput('<html><body><table border="0" width="100%"><tr><td>&nbsp;</td><td style="border: 1px solid gray; font-family: tahoma; font-size: 14px; direction: rtl; text-align: right;">پرداخت موفقيت آميز نبود.1<br /><br /><a href="' . $this->url->link('checkout/cart').  '"><b>بازگشت به فروشگاه</b></a></td><td>&nbsp;</td></tr></table></body></html>');
+		}
 		}
 	}
 	
