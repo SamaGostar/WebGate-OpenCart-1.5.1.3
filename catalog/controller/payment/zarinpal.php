@@ -26,7 +26,7 @@ class ControllerPaymentZarinpal extends Controller {
 		$this->data['cancel_return'] = $this->url->link('checkout/payment', '', 'SSL');
 		$this->data['back'] = $this->url->link('checkout/payment', '', 'SSL');
 		
-		$client = new SoapClient('https://sandbox.zarinpal.com/pg/services/WebGate/wsdl', array('encoding' => 'UTF-8'));	
+		$client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', array('encoding' => 'UTF-8'));	
 		
 		if ((!$client)) {
 			$json = array();
@@ -52,7 +52,7 @@ class ControllerPaymentZarinpal extends Controller {
 			'CallbackURL' 	=> $callbackUrl
 		));
 		if ($result->Status == 100) {
-			$this->data['action'] = 'https://sandbox.zarinpal.com/pg/StartPay/'. $result->Authority;
+			$this->data['action'] = 'https://www.zarinpal.com/pg/StartPay/'. $result->Authority;
 			$json = array();
 			$json['success']= $this->data['action'];
 			$this->response->setOutput(json_encode($json));
@@ -94,7 +94,7 @@ class ControllerPaymentZarinpal extends Controller {
 
 	function verify_payment($authority, $amount){
 		if ($authority) {
-			$client = new SoapClient('https://sandbox.zarinpal.com/pg/services/WebGate/wsdl', array('encoding' => 'UTF-8'));
+			$client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', array('encoding' => 'UTF-8'));
 			if ((!$client)) {
 				echo  "Error: can not connect to ZarinPal.<br>";
 				return false;
