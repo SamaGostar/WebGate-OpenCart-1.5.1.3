@@ -26,9 +26,9 @@ public function confirm() {
 
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
-		$this->load->library('encryption');
+		//$this->load->library('encryption');
 
-		$encryption = new Encryption($this->config->get('config_encryption'));
+		//$encryption = new Encryption($this->config->get('config_encryption'));
 
 		//$data['Amount'] = $this->currency->format($order_info['total'], 'TMN', $order_info['value'], FALSE);
 
@@ -58,7 +58,7 @@ public function confirm() {
 		    $amount=$amount * 1;
 	    }
 
-        $data['order_id'] = $encryption->encrypt($this->session->data['order_id']);
+        $data['order_id'] = $this->session->data['order_id'];
 
 	//	$callbackUrl  =  $this->url->link('payment/zarinpal/callback', 'order_id=' . $data['order_id'], 'SSL');
 		$callbackUrl  =  $this->url->link('payment/zarinpal/callback&order_id=' . $data['order_id']);
@@ -122,11 +122,11 @@ function verify_payment($Authority,$Amount){
 
 
 	public function callback() {
-		$this->load->library('encryption');
+		//$this->load->library('encryption');
 
-		$encryption = new Encryption($this->config->get('config_encryption'));
+		//$encryption = new Encryption($this->config->get('config_encryption'));
         $Authority = $_GET['Authority'];
-		$order_id = $encryption->decrypt($this->request->get['order_id']);
+		$order_id = $this->request->get['order_id'];
 		$MerchantID=$this->config->get('zarinpal_MerchantID');
 		$debugmod=false;
 
