@@ -1,6 +1,6 @@
 <?php
-/* **********************Support And Update By Mojtaba Moghani - http://OpenCartFarsi.Com***************************** */
-require_once(DIR_SYSTEM.'library/nuSoap/nusoap.php');
+/* **********************Support And Update By alireza yousefi  ***************************** */
+//require_once(DIR_SYSTEM.'library/nuSoap/nusoap.php');
 
 class ControllerExtensionPaymentZarinpal extends Controller {
 	public function index() {
