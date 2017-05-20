@@ -1,5 +1,5 @@
 <?php
-/* **********************Support And Update By alireza yousefi  ***************************** */
+/* **********************Support And Update By a.yousefi  Mojtaba Moghani - http://OpenCartFarsi.Com  ***************************** */
 //require_once(DIR_SYSTEM.'library/nuSoap/nusoap.php');
 
 class ControllerExtensionPaymentZarinpal extends Controller {
