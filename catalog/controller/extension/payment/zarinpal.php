@@ -62,7 +62,7 @@ class ControllerExtensionPaymentZarinpal extends Controller {
 			$json['error']= $this->language->get('error_cant_connect');				
 		} elseif($result["Status"] == 100) {
 			//$data['action'] = "https://www.zarinpal.com/pg/StartPay/".$requestResult->Authority."/ZarinGate";
-			$data['action'] = "https://www.zarinpal.com/pg/StartPay/" . $result["Authority"];
+			$data['action'] = "https://www.zarinpal.com/pg/StartPay/" . $result["Authority"] . "/ZarinGate";
 			$json['success']= $data['action'];
 		} else {
 			$json = $this->checkState($result["Status"]);
