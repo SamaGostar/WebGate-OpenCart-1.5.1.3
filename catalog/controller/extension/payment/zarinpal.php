@@ -35,25 +35,37 @@ class ControllerExtensionPaymentZarinpal extends Controller {
 		$data['order_id'] = $this->encryption->encrypt($this->session->data['order_id']);
 		$CallbackURL = $this->url->link('extension/payment/zarinpal/callback', 'order_id=' . $data['order_id'], true);  // Required
 
-		$parameters = array(
-			'MerchantID' 	=> $MerchantID,
-			'Amount' 		=> $Amount,
-			'Description' 	=> $Description,
+
+		$data = array('MerchantID' => $MerchantID,
+			'Amount' => $Amount,
 			'Email' 		=> $Email,
 			'Mobile' 		=> $Mobile,
-			'CallbackURL' 	=> $CallbackURL
-		);
-		$requestResult = $this->zpRequest($parameters);
-		
-		if(!$requestResult) {
+			'CallbackURL' => $CallbackURL,
+			'Description' => $Description);
+		$jsonData = json_encode($data);
+		$ch = curl_init('https://www.zarinpal.com/pg/rest/WebGate/PaymentRequest.json');
+		curl_setopt($ch, CURLOPT_USERAGENT, 'ZarinPal Rest Api v1');
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+			'Content-Type: application/json',
+			'Content-Length: ' . strlen($jsonData)
+		));
+		$result = curl_exec($ch);
+		$err = curl_error($ch);
+		$result = json_decode($result, true);
+		curl_close($ch);
+
+		if(!$result) {
 			$json = array();
 			$json['error']= $this->language->get('error_cant_connect');				
-		} elseif($requestResult->Status == 100) {
+		} elseif($result["Status"] == 100) {
 			//$data['action'] = "https://www.zarinpal.com/pg/StartPay/".$requestResult->Authority."/ZarinGate";
-			$data['action'] = "https://www.zarinpal.com/pg/StartPay/" . $requestResult->Authority;
+			$data['action'] = "https://www.zarinpal.com/pg/StartPay/" . $result["Authority"];
 			$json['success']= $data['action'];
 		} else {
-			$json = $this->checkState($requestResult->Status);
+			$json = $this->checkState($result["Status"]);
 		}
 
 		$this->response->addHeader('Content-Type: application/json');
@@ -140,45 +152,6 @@ class ControllerExtensionPaymentZarinpal extends Controller {
 		return (int)$amount;
 	}
 
-	private function zpRequest($parameters) {
-		// URL also Can be https://ir.zarinpal.com/pg/services/WebGate/wsdl
-		if ($this->config->get('zarinpal_host_type')) {
-			$zp_address = 'https://ir.zarinpal.com/pg/services/WebGate/wsdl';
-		} else {
-			$zp_address = 'https://de.zarinpal.com/pg/services/WebGate/wsdl';
-		}
-		try{
-			$client = new SoapClient($zp_address, array('encoding' => 'UTF-8'));
-			return $client->PaymentRequest($parameters);
-			
-			/*$client = new nusoap_client($zp_address, 'wsdl');
-			$client->soap_defencoding = 'UTF-8';
-			return $client->call('PaymentRequest', $parameters);*/
-
-		} catch(SoapFault $e) {
-			return false;
-		}
-	}
-
-	private function zpVerification($context) {
-		// URL also Can be https://ir.zarinpal.com/pg/services/WebGate/wsdl
-		if ($this->config->get('zarinpal_host_type')) {
-			$zp_address = 'https://ir.zarinpal.com/pg/services/WebGate/wsdl';
-		} else {
-			$zp_address = 'https://de.zarinpal.com/pg/services/WebGate/wsdl';
-		}
-		try {
-			$client = new SoapClient($zp_address, array('encoding' => 'UTF-8'));
-			return $client->PaymentVerification($context);
-			
-			/*$client = new nusoap_client($zp_address, 'wsdl');
-			$client->soap_defencoding = 'UTF-8';
-			return $client->call('PaymentVerification', $context);*/
-
-		} catch(SoapFault $e) {
-			return false;
-		}		
-	}
 
 	private function checkState($status) {
 		$json = array();
@@ -191,23 +164,34 @@ class ControllerExtensionPaymentZarinpal extends Controller {
 		return $json;
 	}
 
+
+
 	private function verifyPayment($authority, $amount) {
 		$MerchantID = $this->config->get('zarinpal_pin');
-		
-		$context = array(
-			'MerchantID'	=> $MerchantID,
-			'Authority' 	=> $authority,
-			'Amount'	 	=> $amount
-		);
-		$verifyResult = $this->zpVerification($context);
+		$data = array('MerchantID' => $MerchantID, 'Authority' => $authority, 'Amount' => $amount);
+		$jsonData = json_encode($data);
+		$ch = curl_init('https://www.zarinpal.com/pg/rest/WebGate/PaymentVerification.json');
+		curl_setopt($ch, CURLOPT_USERAGENT, 'ZarinPal Rest Api v1');
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+			'Content-Type: application/json',
+			'Content-Length: ' . strlen($jsonData)
+		));
+		$result = curl_exec($ch);
+		$err = curl_error($ch);
+		curl_close($ch);
+		$result = json_decode($result, true);
 
-		if(!$verifyResult) {
+
+		if(!$result) {
 			// echo  $this->language->get('error_cant_connect');
 			return false;
-		} elseif($verifyResult->Status == 100) {
-			return ['RefID' => $verifyResult->RefID];
+		} elseif($result['Status'] == 100) {
+			return ['RefID' => $result['RefID']];
 		} else {
-			return ['Status' => $verifyResult->Status];
+			return ['Status' => $result['Status']];
 		}
 	}
 }
