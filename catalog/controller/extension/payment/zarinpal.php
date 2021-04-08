@@ -35,8 +35,8 @@ class ControllerExtensionPaymentZarinpal extends Controller {
 		$data['order_id'] = $this->encryption->encrypt($this->session->data['order_id']);
 		$CallbackURL = $this->url->link('extension/payment/zarinpal/callback', 'order_id=' . $data['order_id'], true);  // Required
 
-
-		$data = array('MerchantID' => $MerchantID,
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*$data = array('MerchantID' => $MerchantID,
 			'Amount' => $Amount,
 			'Email' 		=> $Email,
 			'Mobile' 		=> $Mobile,
@@ -55,21 +55,52 @@ class ControllerExtensionPaymentZarinpal extends Controller {
 		$result = curl_exec($ch);
 		$err = curl_error($ch);
 		$result = json_decode($result, true);
-		curl_close($ch);
+		curl_close($ch);*/
+		$data = array("merchant_id" => $MerchantID,
+			"amount" => $Amount,
+			"callback_url" => $CallbackURL,
+			"description" => $Description,
+			"metadata" => [ "email" => $Email,"mobile"=>$Mobile],
+		);
+		$jsonData = json_encode($data);
+		$ch = curl_init('https://api.zarinpal.com/pg/v4/payment/request.json');
+		curl_setopt($ch, CURLOPT_USERAGENT, 'ZarinPal Rest Api v1');
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+			'Content-Type: application/json',
+			'Content-Length: ' . strlen($jsonData)
+		));
 
+		$result = curl_exec($ch);
+		$err = curl_error($ch);
+		$result = json_decode($result, true, JSON_PRETTY_PRINT);
+		curl_close($ch);
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		if(!$result) {
 			$json = array();
 			$json['error']= $this->language->get('error_cant_connect');				
-		} elseif($result["Status"] == 100) {
+		} elseif($result['errors']['code'] == 100) {
 			//$data['action'] = "https://www.zarinpal.com/pg/StartPay/".$requestResult->Authority."/ZarinGate";
-			$data['action'] = "https://www.zarinpal.com/pg/StartPay/" . $result["Authority"] . "/ZarinGate";
+			$data['action'] = "https://www.zarinpal.com/pg/StartPay/" .  $result['data']["authority"];
 			$json['success']= $data['action'];
 		} else {
-			$json = $this->checkState($result["Status"]);
+			$json = $this->checkState($result['errors']['code']);
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+	//	$this->response->addHeader('Content-Type: application/json');
+		//$this->response->setOutput(json_encode($json));
+		echo'<html><body>
+<script type="text/javascript" src="https://cdn.zarinpal.com/zarinak/v1/checkout.js"></script>
+<script type="text/javascript">
+window.onload = function () {
+Zarinak.setAuthority("' . $result['data']['authority'] . '");
+Zarinak.showQR();
+Zarinak.open();
+};
+</script>
+</body></html>';
 	}
 
 	public function callback() {
@@ -167,8 +198,9 @@ class ControllerExtensionPaymentZarinpal extends Controller {
 
 
 	private function verifyPayment($authority, $amount) {
+		////////////////////////////////////////////////////////////////////////////////////////////////
 		$MerchantID = $this->config->get('zarinpal_pin');
-		$data = array('MerchantID' => $MerchantID, 'Authority' => $authority, 'Amount' => $amount);
+/*		$data = array('MerchantID' => $MerchantID, 'Authority' => $authority, 'Amount' => $amount);
 		$jsonData = json_encode($data);
 		$ch = curl_init('https://www.zarinpal.com/pg/rest/WebGate/PaymentVerification.json');
 		curl_setopt($ch, CURLOPT_USERAGENT, 'ZarinPal Rest Api v1');
@@ -182,16 +214,31 @@ class ControllerExtensionPaymentZarinpal extends Controller {
 		$result = curl_exec($ch);
 		$err = curl_error($ch);
 		curl_close($ch);
+		$result = json_decode($result, true);*/
+		$data = array("merchant_id" => $MerchantID, "authority" => $authority, "amount" => $amount);
+		$jsonData = json_encode($data);
+		$ch = curl_init('https://api.zarinpal.com/pg/v4/payment/verify.json');
+		curl_setopt($ch, CURLOPT_USERAGENT, 'ZarinPal Rest Api v4');
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+			'Content-Type: application/json',
+			'Content-Length: ' . strlen($jsonData)
+		));
+		$result = curl_exec($ch);
+		curl_close($ch);
 		$result = json_decode($result, true);
 
+		////////////////////////////////////////////////////////////////////////////////////////////
 
-		if(!$result) {
+		if(!empty($result['errors'])) {
 			// echo  $this->language->get('error_cant_connect');
 			return false;
-		} elseif($result['Status'] == 100) {
-			return ['RefID' => $result['RefID']];
+		} elseif($result['data']['code'] == 100) {
+			return ['RefID' => $result['data']['ref_id']];
 		} else {
-			return ['Status' => $result['Status']];
+			return ['Status' => $result['errors']['code']];
 		}
 	}
 }
